@@ -22,27 +22,27 @@ where
     };
 
     // Classes
-    let span_class = move || format!("text-lg {}", if status() { "line-through" } else { "" });
+    let span_class = move || format!("text-md {}", if status() { "line-through" } else { "" });
     let completed_button_class = move || {
         format!(
-            "px-3 py-2 rounded-md border-solid border-2 {}",
+            "hover:cursor-pointer {}",
             if !status() {
-                "border-[#7FB069]"
+                "opacity-100"
             } else {
-                "border-[#FED766]"
+                "opacity-50"
             }
         )
     };
 
     view! {
         cx,
-        <div class="flex flex-col justify-between items-center bg-white py-2 px-4 rounded-md sm:flex-row">
+        <div class="flex justify-between items-center">
             <span class=span_class>
                 {todo_item.task}
             </span>
-            <div class="flex justify-between mt-5 w-full sm:w-fit sm:mt-0">
+            <div class="flex justify-between w-fit sm:w-1/3">
                 <button on:click=on_click class=completed_button_class>{move || if !status() { "Complete" } else { "Undo" }}</button>
-                <button on:click=move |_| delete_callback(todo_item.id) class="bg-[#D05353] px-3 py-2 rounded-md text-white sm:ml-2">"Delete"</button>
+                <button on:click=move |_| delete_callback(todo_item.id) class="hover:cusor-pointer ml-4 sm:ml-0">"Delete"</button>
             </div>
         </div>
     }
