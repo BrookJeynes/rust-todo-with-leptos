@@ -17,8 +17,7 @@ where
 
     // Handlers
     let on_click = move |_| {
-        let current_status = status();
-        set_status.update(|val| *val = !current_status);
+        set_status.update(|val| *val = !*val);
     };
 
     // Classes

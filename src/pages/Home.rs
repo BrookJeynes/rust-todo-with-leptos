@@ -37,7 +37,7 @@ pub fn Home(cx: Scope) -> impl IntoView {
 
     // Helpers
     let last_todo_id = move || todo_items().iter().map(|todo_item| todo_item.id).max();
-    
+
     // Handlers
     let delete_todo_item = move |todo_id: u32| {
         set_todo_items
@@ -47,7 +47,7 @@ pub fn Home(cx: Scope) -> impl IntoView {
     let on_submit = move |ev: SubmitEvent| {
         ev.prevent_default();
 
-        let mut new_todo_items = todo_items().clone();
+        let mut new_todo_items = todo_items();
         let todo_id = last_todo_id().unwrap_or_default() + 1;
 
         new_todo_items.push(TodoItem {
@@ -65,11 +65,11 @@ pub fn Home(cx: Scope) -> impl IntoView {
                 <h2 class="text-2xl font-medium mb-4">"Add Task"</h2>
                 <form class="w-full flex flex-col" on:submit=on_submit>
                     <div class="flex items-center justify-between">
-                        <input 
+                        <input
                             class="w-2/3 px-2 py-1 border-b-2 border-black focus:outline-none"
-                            type="text" 
+                            type="text"
                             placeholder="Add a new task"
-                            node_ref=todo_task_input_ref 
+                            node_ref=todo_task_input_ref
                         />
                         <input class="hover:cursor-pointer" type="submit" value="Submit" />
                     </div>
