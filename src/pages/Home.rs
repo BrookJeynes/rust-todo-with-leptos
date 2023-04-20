@@ -2,8 +2,8 @@ use leptos::ev::SubmitEvent;
 use leptos::html::Input;
 use leptos::*;
 
-use crate::components::PageWrapper::*;
-use crate::components::TodoItem::*;
+use crate::components::page_wrapper::*;
+use crate::components::todo_item::*;
 
 #[component]
 pub fn Home(cx: Scope) -> impl IntoView {

@@ -1,6 +1,6 @@
-## Building a website in Leptos from scratch - Part 1
+## Learning Leptos: Building a Todo application — The basics, Part 1
 
-This repo holds all the code for my Leptos tutorial series which can be found here: 
+This repo holds all the code for my Leptos tutorial series which can be found here: https://medium.com/@jeynesbrook/learning-leptos-building-a-todo-application-the-basics-part-1-602d113538d7
 
 ![Website preview](https://user-images.githubusercontent.com/25432120/232404896-cad3efd9-735a-4484-a6b7-50c16037ffec.png)
 

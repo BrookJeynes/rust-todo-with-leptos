@@ -2,7 +2,7 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 
-use crate::pages::Home::*;
+use crate::pages::home::*;
 
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
