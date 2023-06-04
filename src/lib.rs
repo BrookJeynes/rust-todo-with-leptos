@@ -1,7 +1,7 @@
 pub mod app;
 pub mod components;
-pub mod pages;
 pub mod models;
+pub mod pages;
 pub mod server_functions;
 
 use cfg_if::cfg_if;

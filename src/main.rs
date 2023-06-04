@@ -6,8 +6,6 @@ pub mod server_functions;
 
 use cfg_if::cfg_if;
 
-const DB_URL: &str = "sqlite://Todos.db";
-
 cfg_if! {
     if #[cfg(feature = "ssr")] {
         use crate::app::*;
@@ -15,25 +13,30 @@ cfg_if! {
         use actix_files::Files;
         use actix_web::*;
 
+        use sqlx::{
+            sqlite::SqlitePoolOptions,
+            SqlitePool,
+            migrate::MigrateDatabase,
+            Sqlite
+        };
+
         use leptos::*;
         use leptos_actix::{
             generate_route_list,
             LeptosRoutes,
-            handle_server_fns_with_context,
-            handle_server_fns
         };
 
-        use sqlx::{sqlite::SqlitePoolOptions, SqlitePool, migrate::MigrateDatabase, Sqlite};
+        const DB_URL: &str = "sqlite://Todos.db";
+
+        pub fn pool(cx: leptos::Scope) -> Result<SqlitePool, ServerFnError> {
+            use_context::<SqlitePool>(cx)
+                .ok_or("Pool missing.")
+                .map_err(|_| ServerFnError::ServerError("Pool Missing".to_string()))
+        }
 
         #[get("/style.css")]
         async fn css() -> impl Responder {
             actix_files::NamedFile::open_async("./style/output.css").await
-        }
-
-        fn server_fn_handler(pool: web::Data<SqlitePool>) -> Route {
-            handle_server_fns_with_context(move |cx| {
-                provide_context(cx, pool.clone());
-            })
         }
 
         #[actix_web::main]
@@ -75,15 +78,15 @@ cfg_if! {
                     .app_data(web::Data::new(pool.clone()))
                     .service(css)
                     .route(
-                        "/api/{tail:.*}", 
+                        "/api/{tail:.*}",
                         leptos_actix::handle_server_fns_with_context(move |cx| {
                             provide_context(cx, pool2.clone());
                         })
                     )
                     .leptos_routes_with_context(
-                        leptos_options.to_owned(), 
-                        routes.to_owned(), 
-                        move |cx| provide_context(cx, pool.clone()), 
+                        leptos_options.to_owned(),
+                        routes.to_owned(),
+                        move |cx| provide_context(cx, pool.clone()),
                         |cx| view! { cx, <App /> }
                     )
                     .service(Files::new("/", &site_root))

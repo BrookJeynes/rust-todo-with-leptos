@@ -3,11 +3,10 @@ use leptos::*;
 use crate::models::todo::Todo;
 
 #[server(GetTodos, "/api")]
-pub async fn get_todos(cx: Scope) -> Result<Vec<Todo>, ServerFnError> {
-    use crate::components::todo_item::db;
+pub async fn get_todos(_cx: Scope) -> Result<Vec<Todo>, ServerFnError> {
     use sqlx::SqlitePool;
 
-    let pool = use_context::<SqlitePool>(cx)
+    let pool = use_context::<SqlitePool>(_cx)
         .ok_or("Pool missing.")
         .map_err(|_| ServerFnError::ServerError("Pool Missing".to_string()))?;
 
@@ -20,11 +19,10 @@ pub async fn get_todos(cx: Scope) -> Result<Vec<Todo>, ServerFnError> {
 }
 
 #[server(AddTodo, "/api")]
-pub async fn add_todo(cx: Scope, task: String) -> Result<(), ServerFnError> {
-    use crate::components::todo_item::db;
+pub async fn add_todo(_cx: Scope, task: String) -> Result<(), ServerFnError> {
     use sqlx::SqlitePool;
 
-    let pool = use_context::<SqlitePool>(cx)
+    let pool = use_context::<SqlitePool>(_cx)
         .ok_or("Pool missing.")
         .map_err(|_| ServerFnError::ServerError("Pool Missing".to_string()))?;
 
@@ -39,11 +37,10 @@ pub async fn add_todo(cx: Scope, task: String) -> Result<(), ServerFnError> {
 }
 
 #[server(DeleteTodo, "/api")]
-pub async fn delete_todo(cx: Scope, id: u32) -> Result<(), ServerFnError> {
-    use crate::components::todo_item::db;
+pub async fn delete_todo(_cx: Scope, id: u32) -> Result<(), ServerFnError> {
     use sqlx::SqlitePool;
 
-    let pool = use_context::<SqlitePool>(cx)
+    let pool = use_context::<SqlitePool>(_cx)
         .ok_or("Pool missing.")
         .map_err(|_| ServerFnError::ServerError("Pool Missing".to_string()))?;
 
@@ -56,11 +53,10 @@ pub async fn delete_todo(cx: Scope, id: u32) -> Result<(), ServerFnError> {
 }
 
 #[server(UpdateTodo, "/api")]
-pub async fn update_todo(cx: Scope, id: u32, status: bool) -> Result<(), ServerFnError> {
-    use crate::components::todo_item::db;
+pub async fn update_todo(_cx: Scope, id: u32, status: bool) -> Result<(), ServerFnError> {
     use sqlx::SqlitePool;
 
-    let pool = use_context::<SqlitePool>(cx)
+    let pool = use_context::<SqlitePool>(_cx)
         .ok_or("Pool missing.")
         .map_err(|_| ServerFnError::ServerError("Pool Missing".to_string()))?;
 
