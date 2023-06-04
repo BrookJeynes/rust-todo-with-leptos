@@ -1,31 +1,42 @@
-use leptos::*;
+use crate::{
+    models::todo::Todo,
+    server_functions::todo::{DeleteTodo, UpdateTodo},
+};
 
-#[derive(Clone)]
-pub struct TodoItem {
-    pub id: u32,
-    pub task: String,
-    pub status: bool,
+use cfg_if::cfg_if;
+
+use leptos::*;
+use leptos_router::*;
+
+cfg_if! {
+    if #[cfg(feature = "ssr")] {
+        use sqlx::{Connection, SqliteConnection, SqlitePool};
+
+        pub fn pool(cx: Scope) -> Result<SqlitePool, ServerFnError> {
+          use_context::<SqlitePool>(cx)
+            .ok_or("Pool missing.")
+            .map_err(|_| ServerFnError::ServerError("Pool Missing".to_string()))
+        }
+
+        pub async fn db() -> Result<SqliteConnection, ServerFnError> {
+            SqliteConnection::connect("sqlite:Todos.db").await.map_err(|e| ServerFnError::ServerError(e.to_string()))
+        }
+    }
 }
 
 #[component]
-pub fn TodoItem<F>(cx: Scope, todo_item: TodoItem, delete_callback: F) -> impl IntoView
-where
-    F: Fn(u32) + 'static,
-{
-    // Signals
-    let (status, set_status) = create_signal(cx, todo_item.status);
-
-    // Handlers
-    let on_click = move |_| {
-        set_status.update(|val| *val = !*val);
-    };
-
+pub fn TodoItem(
+    cx: Scope,
+    todo_item: Todo,
+    delete_callback: Action<DeleteTodo, Result<(), ServerFnError>>,
+    update_callback: Action<UpdateTodo, Result<(), ServerFnError>>,
+) -> impl IntoView {
     // Classes
-    let span_class = move || format!("text-md {}", if status() { "line-through" } else { "" });
+    let span_class = move || format!("text-md {}", if todo_item.status { "line-through" } else { "" });
     let completed_button_class = move || {
         format!(
             "hover:cursor-pointer {}",
-            if !status() {
+            if !todo_item.status {
                 "opacity-100"
             } else {
                 "opacity-50"
@@ -40,8 +51,24 @@ where
                 {todo_item.task}
             </span>
             <div class="flex justify-between w-fit sm:w-1/3">
-                <button on:click=on_click class=completed_button_class>{move || if !status() { "Complete" } else { "Undo" }}</button>
-                <button on:click=move |_| delete_callback(todo_item.id) class="hover:cusor-pointer ml-4 sm:ml-0">"Delete"</button>
+                <ActionForm action=update_callback>
+                    <input type="hidden" name="status" value={format!("{}", !todo_item.status)}/>
+                    <input type="hidden" name="id" value={todo_item.id}/>
+                    <input
+                        type="submit"
+                        value=move || if !todo_item.status { "Complete" } else { "Undo" }
+                        class=completed_button_class
+                    />
+                </ActionForm>
+
+                <ActionForm action=delete_callback>
+                    <input type="hidden" name="id" value={todo_item.id}/>
+                    <input
+                        type="submit"
+                        value="Delete"
+                        class="hover:cursor-pointer ml-4 sm:ml-0"
+                    />
+                </ActionForm>
             </div>
         </div>
     }
